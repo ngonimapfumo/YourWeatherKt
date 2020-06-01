@@ -3,7 +3,9 @@ package com.ngoni.yourweatherx
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
+import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -34,17 +36,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_LONG).show()
             }
 
-            fun updateDisplay(jsonData: String) {
-
-
-
+            fun updateDisplay(jsonData: JSONObject) {
+                val main = jsonData.getJSONObject("main")
+                temperatureLabel.setText(main.get("temp").toString())
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val jsonData = response.body!!.toString()
+                val jsonData = response.body!!.string()
+                val jsonObject =JSONObject(jsonData)
 
                 runOnUiThread(Runnable {
-                    updateDisplay(jsonData)
+                    updateDisplay(jsonObject)
                 })
             }
 
