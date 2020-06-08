@@ -4,17 +4,21 @@ package com.ngoni.yourweatherx
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.ngoni.yourweatherx.GenUtil.isNetworkAvailable
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     var doubleBackToExitPressedOnce = false
+    val TAG = "MainActivity.kt"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +44,17 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     fun getForecast() {
 
-        if (GenUtil.isNetworkAvailable(applicationContext)) {
+        fun updateDisplay(jsonData: JSONObject) {
+            val main = jsonData.getJSONObject("main")
+            val weatherobj = jsonData.getJSONArray("weather")
+            /*for (x in weatherobj) {
+                println(weatherobj)
+            }*/
+            temperatureLabel.text = main.get("temp").toString()
+            locationText.text = jsonData.get("name").toString()
+        }
 
+        if (isNetworkAvailable(applicationContext)) {
             val url =
                 "https://api.openweathermap.org/data/2.5/weather?lat=-17.89189189189189&lon=30.918717878165474&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
             val client = OkHttpClient()
@@ -56,14 +69,10 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_LONG).show()
                 }
 
-                fun updateDisplay(jsonData: JSONObject) {
-                    val main = jsonData.getJSONObject("main")
-                    temperatureLabel.setText(main.get("temp").toString())
-                }
-
                 override fun onResponse(call: Call, response: Response) {
                     val jsonData = response.body!!.string()
                     val jsonObject = JSONObject(jsonData)
+                    Log.d(TAG, "onResponse: $jsonData")
 
                     runOnUiThread(Runnable {
                         updateDisplay(jsonObject)
