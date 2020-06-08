@@ -8,10 +8,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.ngoni.yourweatherx.GenUtil.getJsonObject
 import com.ngoni.yourweatherx.GenUtil.isNetworkAvailable
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -47,9 +47,10 @@ class MainActivity : AppCompatActivity() {
         fun updateDisplay(jsonData: JSONObject) {
             val main = jsonData.getJSONObject("main")
             val weatherobj = jsonData.getJSONArray("weather")
-            /*for (x in weatherobj) {
-                println(weatherobj)
-            }*/
+            for (x in 0 until weatherobj.length()) {
+                val obj_temp = getJsonObject(weatherobj, x)
+                summaryText.text = obj_temp.get("description").toString()
+            }
             temperatureLabel.text = main.get("temp").toString()
             locationText.text = jsonData.get("name").toString()
         }
