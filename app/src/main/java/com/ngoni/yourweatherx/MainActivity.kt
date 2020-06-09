@@ -1,6 +1,12 @@
 package com.ngoni.yourweatherx
 
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -8,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.ngoni.yourweatherx.GenUtil.getJsonObject
 import com.ngoni.yourweatherx.GenUtil.isNetworkAvailable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -16,17 +23,61 @@ import org.json.JSONObject
 import java.io.IOException
 import java.text.DecimalFormat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationListener {
 
     var doubleBackToExitPressedOnce = false
     val TAG = "MainActivity.kt"
+    var mLocation: Location? = null
+    var locationManager: LocationManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        /*locationManager?.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            0L,
+            0f,
+            locationListener
+        )*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getForecast()
         }
+    }
+
+
+    override fun onLocationChanged(location: Location?) {
+        mLocation = location
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onProviderEnabled(provider: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onProviderDisabled(provider: String?) {
+        TODO("Not yet implemented")
     }
 
     override fun onBackPressed() {
@@ -44,7 +95,6 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun getForecast() {
-
         fun updateDisplay(jsonData: JSONObject) {
             val main = jsonData.getJSONObject("main")
             val weatherobj = jsonData.getJSONArray("weather")
@@ -91,6 +141,8 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
 }
 
 
