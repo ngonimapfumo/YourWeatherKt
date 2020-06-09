@@ -69,15 +69,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        TODO("Not yet implemented")
+        /*TODO("Not yet implemented")*/
     }
 
     override fun onProviderEnabled(provider: String?) {
-        TODO("Not yet implemented")
+        /*TODO("Not yet implemented")*/
     }
 
     override fun onProviderDisabled(provider: String?) {
-        TODO("Not yet implemented")
+        /*TODO("Not yet implemented")*/
     }
 
     override fun onBackPressed() {
@@ -108,7 +108,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
 
         if (isNetworkAvailable(applicationContext)) {
-            //todo: location aware
+
+            val lat = mLocation!!.latitude
+            val lon = mLocation!!.longitude
+
+            Log.d(TAG, "getForecast: $lat+ $lon")
             val url =
                 "https://api.openweathermap.org/data/2.5/weather?lat=-17.89189189189189&lon=30.918717878165474&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
             val client = OkHttpClient()
