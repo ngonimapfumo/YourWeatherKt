@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,11 +52,13 @@ class MainActivity : AppCompatActivity() {
                 val obj_temp = getJsonObject(weatherobj, x)
                 summaryText.text = obj_temp.get("description").toString()
             }
-            temperatureLabel.text = main.get("temp").toString()
+            var decimalFormat = DecimalFormat("0")
+            temperatureLabel.text = decimalFormat.format(main.get("temp"))
             locationText.text = jsonData.get("name").toString()
         }
 
         if (isNetworkAvailable(applicationContext)) {
+            //todo: location aware
             val url =
                 "https://api.openweathermap.org/data/2.5/weather?lat=-17.89189189189189&lon=30.918717878165474&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
             val client = OkHttpClient()

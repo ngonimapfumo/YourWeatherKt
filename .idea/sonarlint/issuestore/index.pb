@@ -13,3 +13,5 @@ S
 #.idea/sonarlint/issuestore/index.pb,9\f\9fe84ebb15faf917b7def6236dba604453cc61e0
 e
 5app/src/main/java/com/ngoni/yourweatherx/GenUtil.java,6\e\6e270d5bfb803b4d7cf48a9df7a954c5c89c51d4
+m
+=app/src/main/java/com/ngoni/yourweatherx/OnPositiveClick.java,d\5\d572b930e13267cf5cb66f5921ecc40039f16a8c

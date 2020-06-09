@@ -1,6 +1,7 @@
 package com.ngoni.yourweatherx;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -41,15 +42,20 @@ public class GenUtil extends AppCompatActivity {
         }
     }
 
-    public static void showAlert(String msg, String title, Context context) {
+    public static void showAlert(String msg, String title, String posMsg, Context context) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setMessage(msg)
-                .setTitle(title);
+                .setTitle(title)
+                .setPositiveButton(posMsg, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        alertDialog.show();
 
 
     }
 
-
-
-
 }
+
