@@ -15,8 +15,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.ngoni.yourweatherx.GenUtil.getJsonObject
-import com.ngoni.yourweatherx.GenUtil.isNetworkAvailable
+import androidx.core.content.ContextCompat
+import com.ngoni.yourweatherx.GenUtil.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
@@ -29,43 +29,56 @@ class MainActivity : AppCompatActivity(), LocationListener {
     val TAG = "MainActivity.kt"
     var mLocation: Location? = null
     var locationManager: LocationManager? = null
+    var genUtil: GenUtil? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        checkPermissions()
+
+
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
+        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager?.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                1000*1,
+                2f,
+                this
+            )
         }
-        /*locationManager?.requestLocationUpdates(
-            LocationManager.NETWORK_PROVIDER,
-            0L,
-            0f,
-            locationListener
-        )*/
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getForecast()
+        }
+
+    }
+
+
+    fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
 
     override fun onLocationChanged(location: Location?) {
-        mLocation = location
+      //  mLocation = location
+
+       Toast.makeText(applicationContext,""+location?.latitude,Toast.LENGTH_LONG).show()
+        println("vvv")
+
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -109,10 +122,14 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         if (isNetworkAvailable(applicationContext)) {
 
-            val lat = mLocation!!.latitude
-            val lon = mLocation!!.longitude
+//            val lat = mLocation!!.latitude
+            //          val lon = mLocation!!.longitude
 
-            Log.d(TAG, "getForecast: $lat+ $lon")
+            //      Log.d(TAG, "getForecast: $lat+ $lon")
+
+           // Toast.makeText(applicationContext, mLocation?.latitude.toString(), Toast.LENGTH_LONG)
+             //   .show()
+
             val url =
                 "https://api.openweathermap.org/data/2.5/weather?lat=-17.89189189189189&lon=30.918717878165474&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
             val client = OkHttpClient()

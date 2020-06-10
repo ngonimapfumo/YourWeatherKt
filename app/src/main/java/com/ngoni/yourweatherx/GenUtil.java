@@ -1,7 +1,10 @@
 package com.ngoni.yourweatherx;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -9,6 +12,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +21,7 @@ import org.json.JSONObject;
 
 public class GenUtil extends AppCompatActivity {
 
-
+    static int LOCATION_PERMISSION_REQUEST_CODE = 989;
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static boolean isNetworkAvailable(Context context) {
         boolean isAvailable = false;
@@ -31,6 +36,17 @@ public class GenUtil extends AppCompatActivity {
         return isAvailable;
 
     }
+
+    public void checkPermissions(Activity activityContext) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activityContext,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
 
     public static JSONObject getJsonObject(JSONArray jsonArray, int position) {
         try {
