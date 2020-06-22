@@ -30,24 +30,38 @@ class MainActivity : AppCompatActivity(), LocationListener {
     var mLocation: Location? = null
     var locationManager: LocationManager? = null
     var genUtil: GenUtil? = null
+    var mLat: Double? = null
+    var mLon: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        checkPermissions()
-
-
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-
-        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager?.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                1000*1,
-                2f,
-                this
+        checkPermissions()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+        locationManager?.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                1f,
+                this
+            )
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -66,7 +80,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
@@ -74,10 +91,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
 
     override fun onLocationChanged(location: Location?) {
-      //  mLocation = location
-
-       Toast.makeText(applicationContext,""+location?.latitude,Toast.LENGTH_LONG).show()
-        println("vvv")
+        Log.d(TAG, "onLocationChanged: ${location?.latitude}")
+        
+        mLon = location?.longitude
+        mLat = location?.latitude
 
     }
 
@@ -121,17 +138,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
 
         if (isNetworkAvailable(applicationContext)) {
-
-//            val lat = mLocation!!.latitude
-            //          val lon = mLocation!!.longitude
-
-            //      Log.d(TAG, "getForecast: $lat+ $lon")
-
-           // Toast.makeText(applicationContext, mLocation?.latitude.toString(), Toast.LENGTH_LONG)
-             //   .show()
-
             val url =
-                "https://api.openweathermap.org/data/2.5/weather?lat=-17.89189189189189&lon=30.918717878165474&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
+                "https://api.openweathermap.org/data/2.5/weather?lat=0.0&lon=0.0&appid=7337147a8504643a7cab939e6c7b6d18&units=metric"
             val client = OkHttpClient()
             val request = Request.Builder()
                 .url(url)

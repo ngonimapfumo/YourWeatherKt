@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import kotlin.jvm.JvmStatic;
+
 public class GenUtil extends AppCompatActivity {
 
     static int LOCATION_PERMISSION_REQUEST_CODE = 989;
@@ -37,6 +39,7 @@ public class GenUtil extends AppCompatActivity {
 
     }
 
+    @JvmStatic
     public void checkPermissions(Activity activityContext) {
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
